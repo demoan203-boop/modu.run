@@ -14,7 +14,7 @@ class Settings(BaseSettings):
 
     cors_origins: list[str] = ["http://localhost:5173"]
 
-    # 프로덕션(예: 프런트 moda.run / 백엔드 api.moda.run)에서만 오버라이드.
+    # 프로덕션(예: 프런트 modu.run / 백엔드 api.modu.run)에서만 오버라이드.
     # 로컬 개발(HTTP, 동일 출처 프록시)에서는 기본값 그대로 둔다.
     cookie_domain: str | None = None
     cookie_secure: bool = False

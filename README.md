@@ -67,11 +67,11 @@ npm run dev
 
 브라우저에서 `http://localhost:5173` 접속. `/api` 요청은 Vite 프록시를 통해 `http://localhost:8000`으로 전달됩니다.
 
-## 4. 배포 (Vercel + Render + moda.run)
+## 4. 배포 (Vercel + Render + modu.run)
 
-프런트엔드는 Vercel, 백엔드는 Render에 올리고 `moda.run` 도메인을 연결합니다.
-- `moda.run`, `www.moda.run` → Vercel (프런트엔드)
-- `api.moda.run` → Render (백엔드)
+프런트엔드는 Vercel, 백엔드는 Render에 올리고 `modu.run` 도메인을 연결합니다.
+- `modu.run`, `www.modu.run` → Vercel (프런트엔드)
+- `api.modu.run` → Render (백엔드)
 
 ### 4-1. GitHub 저장소 준비
 Vercel/Render 둘 다 GitHub 저장소를 연결해 배포합니다. GitHub에서 새 저장소를 만든 뒤:
@@ -91,10 +91,10 @@ git push -u origin main
 3. Environment 탭에서 `.env`에 있는 값을 그대로 옮기고, 아래 값을 추가/변경:
    | 키 | 값 |
    |---|---|
-   | `CORS_ORIGINS` | `["https://moda.run","https://www.moda.run"]` |
-   | `COOKIE_DOMAIN` | `.moda.run` |
+   | `CORS_ORIGINS` | `["https://modu.run","https://www.modu.run"]` |
+   | `COOKIE_DOMAIN` | `.modu.run` |
    | `COOKIE_SECURE` | `true` |
-4. 배포 완료 후 Render 대시보드 → Settings → Custom Domains에서 `api.moda.run` 추가 → 화면에 표시되는 CNAME 값을 도메인 DNS에 등록
+4. 배포 완료 후 Render 대시보드 → Settings → Custom Domains에서 `api.modu.run` 추가 → 화면에 표시되는 CNAME 값을 도메인 DNS에 등록
 
 ### 4-3. 프런트엔드 (Vercel)
 1. [Vercel](https://vercel.com) → Add New → Project → 같은 GitHub 저장소 선택
@@ -104,11 +104,11 @@ git push -u origin main
 3. Environment Variables에 추가 (Production):
    | 키 | 값 |
    |---|---|
-   | `VITE_API_URL` | `https://api.moda.run` |
-4. 배포 완료 후 Vercel 대시보드 → Settings → Domains에서 `moda.run`, `www.moda.run` 추가 → 화면에 표시되는 A/CNAME 레코드를 도메인 DNS에 등록
+   | `VITE_API_URL` | `https://api.modu.run` |
+4. 배포 완료 후 Vercel 대시보드 → Settings → Domains에서 `modu.run`, `www.modu.run` 추가 → 화면에 표시되는 A/CNAME 레코드를 도메인 DNS에 등록
 
 ### 4-4. 확인
-DNS가 전파된 뒤(수 분~수 시간) `https://moda.run`에서 회원가입 → 로그인 → 검색 → 검색기록까지 정상 동작하는지 확인합니다.
+DNS가 전파된 뒤(수 분~수 시간) `https://modu.run`에서 회원가입 → 로그인 → 검색 → 검색기록까지 정상 동작하는지 확인합니다.
 
 ## 프로젝트 구조
 
@@ -124,6 +124,6 @@ MODU/
 - 자연어 검색 → AI 조건 해석 → 가격비교 결과 표시
 - 회원가입 / 로그인 / 로그아웃 (httpOnly 쿠키 기반 세션)
 - 로그인 사용자의 검색 기록 저장 및 조회
-- Vercel(프런트) + Render(백엔드) + moda.run 도메인 배포
+- Vercel(프런트) + Render(백엔드) + modu.run 도메인 배포
 
 다음 단계(수익화 등)는 이후 진행 예정입니다.

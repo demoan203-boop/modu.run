@@ -2,7 +2,7 @@ import type { SearchResponse } from '../types/product'
 import type { SearchHistoryItem, User } from '../types/auth'
 
 // 로컬 개발: 비워두면 Vite 프록시가 처리하는 상대 경로(/api/...) 그대로 사용.
-// 프로덕션: 프런트/백엔드가 다른 도메인이므로 Vercel에 VITE_API_URL(예: https://api.moda.run)을 설정.
+// 프로덕션: 프런트/백엔드가 다른 도메인이므로 Vercel에 VITE_API_URL(예: https://api.modu.run)을 설정.
 const API_BASE = import.meta.env.VITE_API_URL ?? ''
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
