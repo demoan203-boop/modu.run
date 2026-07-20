@@ -31,3 +31,8 @@ app.include_router(auth.router, prefix="/api/auth")
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/")
+async def root() -> dict[str, str]:
+    return {"status": "ok", "service": "modu.run API"}
