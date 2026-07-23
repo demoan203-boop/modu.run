@@ -5,11 +5,13 @@ import { LoadingState } from './components/LoadingState'
 import { ProductList } from './components/ProductList'
 import { AuthForm } from './components/AuthForm'
 import { SearchHistoryPanel } from './components/SearchHistoryPanel'
+import { IntroScreen } from './components/IntroScreen'
 import { useAuth } from './context/AuthContext'
 import type { Product } from './types/product'
 
 function App() {
   const { user, isLoading: isAuthLoading, logout } = useAuth()
+  const [hasEntered, setHasEntered] = useState(false)
   const [query, setQuery] = useState('')
   const [products, setProducts] = useState<Product[]>([])
   const [summary, setSummary] = useState('')
@@ -36,6 +38,10 @@ function App() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (!hasEntered) {
+    return <IntroScreen onEnter={() => setHasEntered(true)} />
   }
 
   return (
