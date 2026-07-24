@@ -8,6 +8,7 @@ import { SearchHistoryPanel } from './components/SearchHistoryPanel'
 import { IntroScreen } from './components/IntroScreen'
 import { useAuth } from './context/AuthContext'
 import type { Product } from './types/product'
+import adBanner from './assets/main-ad-banner.png'
 
 function App() {
   const { user, isLoading: isAuthLoading, logout } = useAuth()
@@ -81,6 +82,15 @@ function App() {
           )}
         </div>
       </header>
+
+      <div
+        className="relative h-56 w-full bg-cover bg-center sm:h-72"
+        style={{ backgroundImage: `url(${adBanner})` }}
+        role="img"
+        aria-label="MODU.RUN 온라인쇼핑의 혁명 광고 배너"
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-transparent to-transparent" />
+      </div>
 
       <main className="mx-auto max-w-5xl px-4 py-8">
         {user && <SearchHistoryPanel onSelect={handleSearch} refreshTrigger={historyRefreshTrigger} />}
