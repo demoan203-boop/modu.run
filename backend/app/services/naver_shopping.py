@@ -42,6 +42,7 @@ async def search_products(keyword: str, sort: str = "sim", display: int = 100) -
             "mall_name": item.get("mallName", ""),
             "image_url": item.get("image", ""),
             "link": item.get("link", ""),
+            "category": item.get("category1", ""),
         }
         for item in items
     ]

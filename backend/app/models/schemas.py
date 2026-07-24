@@ -13,6 +13,7 @@ class Product(BaseModel):
     mall_name: str
     image_url: str
     link: str
+    category: str = ""
 
 
 class SearchResponse(BaseModel):

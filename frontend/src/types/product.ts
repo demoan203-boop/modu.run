@@ -4,6 +4,7 @@ export interface Product {
   mall_name: string
   image_url: string
   link: string
+  category: string
 }
 
 export interface SearchResponse {
