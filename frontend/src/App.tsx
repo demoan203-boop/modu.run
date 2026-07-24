@@ -3,6 +3,7 @@ import { searchProducts } from './api/client'
 import { SearchBar } from './components/SearchBar'
 import { LoadingState } from './components/LoadingState'
 import { ProductList } from './components/ProductList'
+import { CategoryGrid } from './components/CategoryGrid'
 import { AuthForm } from './components/AuthForm'
 import { SearchHistoryPanel } from './components/SearchHistoryPanel'
 import { IntroScreen } from './components/IntroScreen'
@@ -21,6 +22,8 @@ function App() {
   const [hasSearched, setHasSearched] = useState(false)
   const [showAuthForm, setShowAuthForm] = useState(false)
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0)
+  const [screen, setScreen] = useState<'home' | 'category'>('home')
+  const [activeCategory, setActiveCategory] = useState<string | null>(null)
 
   async function handleSearch(searchQuery: string) {
     setQuery(searchQuery)
@@ -39,6 +42,21 @@ function App() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  function handleCategorySelect(category: string) {
+    setActiveCategory(category)
+    setScreen('category')
+    handleSearch(category)
+  }
+
+  function handleBackToHome() {
+    setScreen('home')
+    setActiveCategory(null)
+    setHasSearched(false)
+    setQuery('')
+    setProducts([])
+    setSummary('')
   }
 
   if (!hasEntered) {
@@ -83,17 +101,36 @@ function App() {
         </div>
       </header>
 
-      <div
-        className="relative h-72 w-full bg-cover bg-center sm:h-[28rem]"
-        style={{ backgroundImage: `url(${adBanner})` }}
-        role="img"
-        aria-label="MODU.RUN 온라인쇼핑의 혁명 광고 배너"
-      >
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-50 to-transparent" />
-      </div>
+      {screen === 'home' && (
+        <div
+          className="relative h-72 w-full bg-cover bg-center sm:h-[28rem]"
+          style={{ backgroundImage: `url(${adBanner})` }}
+          role="img"
+          aria-label="MODU.RUN 온라인쇼핑의 혁명 광고 배너"
+        >
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-50 to-transparent" />
+        </div>
+      )}
 
       <main className="mx-auto max-w-5xl px-4 py-8">
-        {user && <SearchHistoryPanel onSelect={handleSearch} refreshTrigger={historyRefreshTrigger} />}
+        {screen === 'category' && (
+          <div className="mb-6 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleBackToHome}
+              className="rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-600 transition hover:bg-gray-50"
+            >
+              ← 홈으로
+            </button>
+            <h2 className="text-xl font-bold text-gray-900">{activeCategory}</h2>
+          </div>
+        )}
+
+        {screen === 'home' && <CategoryGrid onSelect={handleCategorySelect} />}
+
+        {user && screen === 'home' && (
+          <SearchHistoryPanel onSelect={handleSearch} refreshTrigger={historyRefreshTrigger} />
+        )}
 
         <SearchBar query={query} onQueryChange={setQuery} onSearch={handleSearch} isLoading={isLoading} />
 
