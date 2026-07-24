@@ -19,3 +19,20 @@ body {
   animation: intro-face-breathe 4.5s ease-in-out infinite;
   transform-origin: center;
 }
+
+/* CategoryMoodPanel 애니메이션 */
+@keyframes mood-sweep {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.15) translateY(-10px);
+  }
+}
+
+.animate-mood-sweep {
+  animation: mood-sweep 6s ease-in-out infinite;
+}
