@@ -4,6 +4,7 @@ import { SearchBar } from './components/SearchBar'
 import { LoadingState } from './components/LoadingState'
 import { ProductList } from './components/ProductList'
 import { CategoryGrid } from './components/CategoryGrid'
+import { InstagramEmbedCard } from './components/InstagramEmbedCard'
 import { AuthForm } from './components/AuthForm'
 import { SearchHistoryPanel } from './components/SearchHistoryPanel'
 import { IntroScreen } from './components/IntroScreen'
@@ -124,6 +125,15 @@ function App() {
             </button>
             <h2 className="text-xl font-bold text-gray-900">{activeCategory}</h2>
           </div>
+        )}
+
+        {screen === 'category' && activeCategory === '화장품/미용' && (
+          <InstagramEmbedCard
+            url="https://www.instagram.com/reels/DZ-UsB8oMyZ/"
+            caption={
+              'A concentrated masculine elixir built around a crisp green pear accord, balanced with dark botanical notes and mineral facets. Refined, distinctive and preserved in its purest form.'
+            }
+          />
         )}
 
         {screen === 'home' && <CategoryGrid onSelect={handleCategorySelect} />}
