@@ -1,55 +1,18 @@
+import introBg from '../assets/intro-banner.png'
+
 export function IntroScreen({ onEnter }: { onEnter: () => void }) {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-between overflow-hidden bg-[#120c2e] text-white">
-      {/* 배경 - 대각선 색면 블로킹 (서서히 드리프트) */}
-      <div className="animate-intro-bg-drift pointer-events-none absolute inset-0">
-        <div className="absolute -left-1/3 top-0 h-full w-[65%] -skew-x-12 bg-gradient-to-b from-[#6d28d9] via-[#4c1d95] to-[#120c2e] opacity-70" />
-        <div className="absolute -right-1/4 top-0 h-[60%] w-[60%] skew-x-12 bg-gradient-to-bl from-[#f59e0b] via-[#f97316]/70 to-transparent opacity-60" />
-        <div className="absolute bottom-0 left-0 h-[35%] w-full bg-gradient-to-t from-[#0ea5a4]/30 to-transparent" />
-      </div>
+    <div className="relative flex min-h-screen flex-col items-center justify-end overflow-hidden bg-black text-white">
+      {/* 배경 - MODU.RUN 광고 이미지 (숨쉬듯 서서히 확대) */}
+      <div
+        className="animate-intro-face-breathe absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${introBg})` }}
+        role="img"
+        aria-label="MODU.RUN 온라인쇼핑의 혁명 광고 이미지"
+      />
 
-      {/* 추상 초상 - 색면 슬라이스 얼굴 (숨쉬듯 스케일 + 색상 순환) */}
-      <div className="relative mt-14 flex flex-1 items-center justify-center sm:mt-16">
-        <svg
-          viewBox="0 0 300 360"
-          className="animate-intro-face-breathe animate-intro-hue-cycle h-72 w-60 drop-shadow-2xl sm:h-[26rem] sm:w-80"
-          role="img"
-          aria-label="MODU 추상 초상 애니메이션"
-        >
-          <defs>
-            <clipPath id="portrait">
-              <ellipse cx="150" cy="140" rx="105" ry="135" />
-              <path d="M 60 240 L 240 240 L 210 340 L 90 340 Z" />
-            </clipPath>
-          </defs>
-
-          <g clipPath="url(#portrait)">
-            <rect x="0" y="0" width="300" height="65" fill="#fef3c7" />
-            <rect x="0" y="65" width="300" height="60" fill="#2e2a5c" transform="skewY(-4)" />
-            <rect x="0" y="125" width="300" height="70" fill="#fef3c7" transform="skewY(3)" />
-            <rect x="0" y="195" width="300" height="40" fill="#f97316" transform="skewY(-3)" />
-            <rect x="0" y="235" width="300" height="50" fill="#fef3c7" />
-            <rect x="0" y="285" width="300" height="75" fill="#0ea5a4" transform="skewY(4)" />
-          </g>
-
-          {/* 눈 (깜빡임) */}
-          <g className="animate-intro-blink" style={{ transformOrigin: '107px 158px' }}>
-            <ellipse cx="107" cy="158" rx="30" ry="18" fill="#fef3c7" stroke="#120c2e" strokeWidth="2" />
-          </g>
-          <g className="animate-intro-blink" style={{ transformOrigin: '193px 158px' }}>
-            <ellipse cx="193" cy="158" rx="30" ry="18" fill="#fef3c7" stroke="#120c2e" strokeWidth="2" />
-          </g>
-
-          {/* 눈동자 (좌우로 시선 이동) */}
-          <g className="animate-intro-eyes-look">
-            <circle cx="112" cy="158" r="11" fill="#6d28d9" />
-            <circle cx="188" cy="158" r="11" fill="#f97316" />
-          </g>
-
-          {/* 입술 */}
-          <path d="M 105 252 Q 150 242 195 252 Q 150 270 105 252 Z" fill="#e11d48" />
-        </svg>
-      </div>
+      {/* 하단 가독성을 위한 어두운 그라데이션 스크림 */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
       {/* 하단: 로고 + Enter 버튼 */}
       <div className="relative z-10 mb-12 flex flex-col items-center gap-6 px-4 text-center sm:mb-16">

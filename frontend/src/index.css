@@ -5,16 +5,6 @@ body {
 }
 
 /* IntroScreen 애니메이션 */
-@keyframes intro-bg-drift {
-  0%,
-  100% {
-    transform: translateX(0) rotate(0deg);
-  }
-  50% {
-    transform: translateX(2%) rotate(0.5deg);
-  }
-}
-
 @keyframes intro-face-breathe {
   0%,
   100% {
@@ -25,60 +15,7 @@ body {
   }
 }
 
-@keyframes intro-blink {
-  0%,
-  92%,
-  100% {
-    transform: scaleY(1);
-  }
-  96% {
-    transform: scaleY(0.1);
-  }
-}
-
-@keyframes intro-eyes-look {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-3px);
-  }
-  75% {
-    transform: translateX(3px);
-  }
-}
-
-@keyframes intro-hue-cycle {
-  0% {
-    filter: hue-rotate(0deg);
-  }
-  50% {
-    filter: hue-rotate(18deg);
-  }
-  100% {
-    filter: hue-rotate(0deg);
-  }
-}
-
-.animate-intro-bg-drift {
-  animation: intro-bg-drift 9s ease-in-out infinite;
-}
-
 .animate-intro-face-breathe {
   animation: intro-face-breathe 4.5s ease-in-out infinite;
   transform-origin: center;
-}
-
-.animate-intro-blink {
-  animation: intro-blink 5s ease-in-out infinite;
-  transform-origin: center;
-}
-
-.animate-intro-eyes-look {
-  animation: intro-eyes-look 7s ease-in-out infinite;
-}
-
-.animate-intro-hue-cycle {
-  animation: intro-hue-cycle 10s ease-in-out infinite;
 }
