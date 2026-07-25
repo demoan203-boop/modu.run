@@ -5,6 +5,7 @@ import { LoadingState } from './components/LoadingState'
 import { ProductList } from './components/ProductList'
 import { CategoryGrid } from './components/CategoryGrid'
 import { CategoryMoodPanel } from './components/CategoryMoodPanel'
+import { OutfitSelector } from './components/OutfitSelector'
 import { AuthForm } from './components/AuthForm'
 import { SearchHistoryPanel } from './components/SearchHistoryPanel'
 import { IntroScreen } from './components/IntroScreen'
@@ -128,6 +129,8 @@ function App() {
         )}
 
         {screen === 'category' && activeCategory === '화장품/미용' && <CategoryMoodPanel />}
+
+        {screen === 'category' && activeCategory === '패션의류' && <OutfitSelector onSearch={handleSearch} />}
 
         {screen === 'home' && <CategoryGrid onSelect={handleCategorySelect} />}
 
