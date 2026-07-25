@@ -8,6 +8,8 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  loginWithGoogle: (idToken: string) => Promise<void>
+  loginWithKakao: (accessToken: string) => Promise<void>
   isAuthFormOpen: boolean
   openAuthForm: () => void
   closeAuthForm: () => void
@@ -43,6 +45,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  async function loginWithGoogle(idToken: string) {
+    const loggedInUser = await api.loginWithGoogle(idToken)
+    setUser(loggedInUser)
+  }
+
+  async function loginWithKakao(accessToken: string) {
+    const loggedInUser = await api.loginWithKakao(accessToken)
+    setUser(loggedInUser)
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -51,6 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
+        loginWithGoogle,
+        loginWithKakao,
         isAuthFormOpen,
         openAuthForm: () => setIsAuthFormOpen(true),
         closeAuthForm: () => setIsAuthFormOpen(false),

@@ -14,6 +14,10 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255))
+    google_id: Mapped[str | None] = mapped_column(String(255), unique=True, index=True, default=None)
+    kakao_id: Mapped[str | None] = mapped_column(String(255), unique=True, index=True, default=None)
+    reset_token: Mapped[str | None] = mapped_column(String(64), unique=True, index=True, default=None)
+    reset_token_expires_at: Mapped[datetime | None] = mapped_column(default=None)
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
     search_history: Mapped[list["SearchHistory"]] = relationship(

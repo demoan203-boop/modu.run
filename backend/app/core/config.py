@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     naver_client_id: str = ""
     naver_client_secret: str = ""
     anthropic_api_key: str = ""
+    google_client_id: str = ""
 
     database_url: str = ""
     jwt_secret_key: str = ""

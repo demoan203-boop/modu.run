@@ -8,6 +8,7 @@ import { CategoryMoodPanel } from './components/CategoryMoodPanel'
 import { OutfitSelector } from './components/OutfitSelector'
 import { FittingRoom } from './components/FittingRoom'
 import { AuthForm } from './components/AuthForm'
+import { ResetPasswordForm } from './components/ResetPasswordForm'
 import { CartDrawer } from './components/CartDrawer'
 import { SearchHistoryPanel } from './components/SearchHistoryPanel'
 import { IntroScreen } from './components/IntroScreen'
@@ -30,6 +31,9 @@ function App() {
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0)
   const [screen, setScreen] = useState<'home' | 'category' | 'fitting'>('home')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
+  const [resetToken, setResetToken] = useState(() =>
+    new URLSearchParams(window.location.search).get('resetToken'),
+  )
 
   async function handleSearch(searchQuery: string) {
     setQuery(searchQuery)
@@ -68,6 +72,20 @@ function App() {
   function handleOpenFittingRoom() {
     setShowCart(false)
     setScreen('fitting')
+  }
+
+  if (resetToken) {
+    return (
+      <ResetPasswordForm
+        token={resetToken}
+        onDone={() => {
+          window.history.replaceState({}, '', window.location.pathname)
+          setResetToken(null)
+          setHasEntered(true)
+          openAuthForm()
+        }}
+      />
+    )
   }
 
   if (!hasEntered) {

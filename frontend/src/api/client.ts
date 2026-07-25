@@ -41,6 +41,25 @@ export function logout(): Promise<void> {
   return request('/api/auth/logout', { method: 'POST' })
 }
 
+export function requestPasswordReset(email: string): Promise<{ message: string }> {
+  return request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify({ email }) })
+}
+
+export function confirmPasswordReset(token: string, newPassword: string): Promise<{ message: string }> {
+  return request('/api/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, new_password: newPassword }),
+  })
+}
+
+export function loginWithGoogle(idToken: string): Promise<User> {
+  return request('/api/auth/google', { method: 'POST', body: JSON.stringify({ id_token: idToken }) })
+}
+
+export function loginWithKakao(accessToken: string): Promise<User> {
+  return request('/api/auth/kakao', { method: 'POST', body: JSON.stringify({ access_token: accessToken }) })
+}
+
 export function getMe(): Promise<User> {
   return request('/api/auth/me')
 }

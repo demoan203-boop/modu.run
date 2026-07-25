@@ -67,3 +67,20 @@ class CartItemOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str = Field(min_length=8, max_length=72)
+
+
+class GoogleLoginRequest(BaseModel):
+    id_token: str
+
+
+class KakaoLoginRequest(BaseModel):
+    access_token: str
