@@ -52,6 +52,45 @@ body {
   animation: circle-pulse 0.33s ease-out;
 }
 
+/* FashionMotionPoster 애니메이션 */
+@keyframes fashion-block-slide {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateX(0);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.animate-fashion-block-slide {
+  animation: fashion-block-slide 0.45s ease-in-out;
+}
+
+@keyframes fashion-stripe-wipe {
+  0% {
+    clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+    opacity: 0.85;
+  }
+  50% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 0.85;
+  }
+  100% {
+    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+    opacity: 0;
+  }
+}
+
+.animate-fashion-stripe-wipe {
+  animation: fashion-stripe-wipe 0.45s ease-in-out;
+}
+
 /* OutfitSelector 애니메이션 */
 @keyframes card-in {
   from {

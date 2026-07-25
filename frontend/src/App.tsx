@@ -5,6 +5,7 @@ import { LoadingState } from './components/LoadingState'
 import { ProductList } from './components/ProductList'
 import { CategoryGrid } from './components/CategoryGrid'
 import { CategoryMoodPanel } from './components/CategoryMoodPanel'
+import { FashionMotionPoster } from './components/FashionMotionPoster'
 import { OutfitSelector } from './components/OutfitSelector'
 import { FittingRoom } from './components/FittingRoom'
 import { AuthForm } from './components/AuthForm'
@@ -179,6 +180,8 @@ function App() {
         {screen === 'fitting' && <FittingRoom items={cartItems} onOpenCart={() => setShowCart(true)} />}
 
         {screen === 'category' && activeCategory === '화장품/미용' && <CategoryMoodPanel />}
+
+        {screen === 'category' && activeCategory === '패션잡화' && <FashionMotionPoster />}
 
         {screen === 'category' && activeCategory === '패션의류' && <OutfitSelector onSearch={handleSearch} />}
 
