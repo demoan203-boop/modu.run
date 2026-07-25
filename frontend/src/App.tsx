@@ -6,6 +6,7 @@ import { ProductList } from './components/ProductList'
 import { CategoryGrid } from './components/CategoryGrid'
 import { CategoryMoodPanel } from './components/CategoryMoodPanel'
 import { OutfitSelector } from './components/OutfitSelector'
+import { FittingRoom } from './components/FittingRoom'
 import { AuthForm } from './components/AuthForm'
 import { CartDrawer } from './components/CartDrawer'
 import { SearchHistoryPanel } from './components/SearchHistoryPanel'
@@ -27,7 +28,7 @@ function App() {
   const [hasSearched, setHasSearched] = useState(false)
   const [showCart, setShowCart] = useState(false)
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0)
-  const [screen, setScreen] = useState<'home' | 'category'>('home')
+  const [screen, setScreen] = useState<'home' | 'category' | 'fitting'>('home')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
 
   async function handleSearch(searchQuery: string) {
@@ -62,6 +63,11 @@ function App() {
     setQuery('')
     setProducts([])
     setSummary('')
+  }
+
+  function handleOpenFittingRoom() {
+    setShowCart(false)
+    setScreen('fitting')
   }
 
   if (!hasEntered) {
@@ -137,7 +143,7 @@ function App() {
       )}
 
       <main className="mx-auto max-w-5xl px-4 py-8">
-        {screen === 'category' && (
+        {(screen === 'category' || screen === 'fitting') && (
           <div className="mb-6 flex items-center gap-3">
             <button
               type="button"
@@ -146,9 +152,13 @@ function App() {
             >
               ← 홈으로
             </button>
-            <h2 className="text-xl font-bold text-gray-900">{activeCategory}</h2>
+            <h2 className="text-xl font-bold text-gray-900">
+              {screen === 'fitting' ? '가상 피팅룸' : activeCategory}
+            </h2>
           </div>
         )}
+
+        {screen === 'fitting' && <FittingRoom items={cartItems} />}
 
         {screen === 'category' && activeCategory === '화장품/미용' && <CategoryMoodPanel />}
 
@@ -160,26 +170,30 @@ function App() {
           <SearchHistoryPanel onSelect={handleSearch} refreshTrigger={historyRefreshTrigger} />
         )}
 
-        <SearchBar query={query} onQueryChange={setQuery} onSearch={handleSearch} isLoading={isLoading} />
+        {screen !== 'fitting' && (
+          <>
+            <SearchBar query={query} onQueryChange={setQuery} onSearch={handleSearch} isLoading={isLoading} />
 
-        {isLoading && <LoadingState />}
+            {isLoading && <LoadingState />}
 
-        {!isLoading && error && (
-          <p className="mt-8 rounded-lg bg-red-50 p-4 text-center text-red-600">{error}</p>
-        )}
-
-        {!isLoading && !error && hasSearched && (
-          <div className="mt-8">
-            {summary && (
-              <div className="mb-6 rounded-lg bg-indigo-50 p-4 text-indigo-800">{summary}</div>
+            {!isLoading && error && (
+              <p className="mt-8 rounded-lg bg-red-50 p-4 text-center text-red-600">{error}</p>
             )}
-            <ProductList products={products} />
-          </div>
+
+            {!isLoading && !error && hasSearched && (
+              <div className="mt-8">
+                {summary && (
+                  <div className="mb-6 rounded-lg bg-indigo-50 p-4 text-indigo-800">{summary}</div>
+                )}
+                <ProductList products={products} />
+              </div>
+            )}
+          </>
         )}
       </main>
 
       {isAuthFormOpen && <AuthForm onClose={closeAuthForm} />}
-      {showCart && <CartDrawer onClose={() => setShowCart(false)} />}
+      {showCart && <CartDrawer onClose={() => setShowCart(false)} onOpenFittingRoom={handleOpenFittingRoom} />}
     </div>
   )
 }

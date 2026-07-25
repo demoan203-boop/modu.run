@@ -1,6 +1,6 @@
 import { useCart } from '../context/CartContext'
 
-export function CartDrawer({ onClose }: { onClose: () => void }) {
+export function CartDrawer({ onClose, onOpenFittingRoom }: { onClose: () => void; onOpenFittingRoom: () => void }) {
   const { items, isLoading, removeItem } = useCart()
   const total = items.reduce((sum, item) => sum + item.price, 0)
 
@@ -51,9 +51,18 @@ export function CartDrawer({ onClose }: { onClose: () => void }) {
         </div>
 
         {items.length > 0 && (
-          <div className="mt-4 flex items-center justify-between border-t border-gray-100 pt-4">
-            <span className="text-sm text-gray-500">합계</span>
-            <span className="text-lg font-bold text-gray-900">{total.toLocaleString('ko-KR')}원</span>
+          <div className="mt-4 border-t border-gray-100 pt-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-gray-500">합계</span>
+              <span className="text-lg font-bold text-gray-900">{total.toLocaleString('ko-KR')}원</span>
+            </div>
+            <button
+              type="button"
+              onClick={onOpenFittingRoom}
+              className="mt-3 w-full rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-800"
+            >
+              가상 피팅룸에서 입어보기
+            </button>
           </div>
         )}
       </div>
