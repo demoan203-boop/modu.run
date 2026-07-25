@@ -1,31 +1,117 @@
+import { useEffect, useState } from 'react'
+import slideClubmaster from '../assets/intro-slides/slide-clubmaster-closeup.png'
+
+const SCENE_BOUNDARIES = [2000, 4000, 7000, 9000]
+const TOTAL_DURATION_MS = 9000
+
+const ACCESSORY_CYCLE = [
+  { label: '디자이너 선글라스', icon: '🕶️', color: '#f59e0b' },
+  { label: '럭셔리 핸드백', icon: '👜', color: '#ec4899' },
+  { label: '프리미엄 시계', icon: '⌚', color: '#38bdf8' },
+  { label: '네크리스', icon: '💎', color: '#a78bfa' },
+  { label: '비즈니스 수트', icon: '🧥', color: '#34d399' },
+  { label: '슈즈', icon: '👞', color: '#f87171' },
+]
+
+const MOCK_PRODUCT_CARDS = [
+  { icon: '🕶️', name: '디자이너 선글라스', brand: 'MODU SELECT', price: '328,000원', discount: '30%' },
+  { icon: '👜', name: '럭셔리 핸드백', brand: 'MODU SELECT', price: '1,240,000원', discount: '15%' },
+  { icon: '⌚', name: '프리미엄 시계', brand: 'MODU SELECT', price: '890,000원', discount: null },
+]
+
 export function CategoryMoodPanel() {
+  const [elapsed, setElapsed] = useState(0)
+
+  useEffect(() => {
+    const start = Date.now()
+    const timer = setInterval(() => {
+      setElapsed((Date.now() - start) % TOTAL_DURATION_MS)
+    }, 80)
+    return () => clearInterval(timer)
+  }, [])
+
+  const scene = SCENE_BOUNDARIES.findIndex((boundary) => elapsed < boundary)
+  const accessoryIndex = Math.floor(elapsed / 330) % ACCESSORY_CYCLE.length
+  const accessory = ACCESSORY_CYCLE[accessoryIndex]
+  const productIndex = Math.floor(((elapsed - 4000) / 1000) % MOCK_PRODUCT_CARDS.length)
+
   return (
     <div className="mb-8 flex flex-col items-center gap-5 rounded-xl border border-gray-200 bg-white p-6 sm:flex-row sm:items-center">
       <div className="relative h-[420px] w-[280px] shrink-0 overflow-hidden rounded-lg bg-black">
-        <div className="animate-mood-sweep pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(255,255,255,0.4),transparent_60%)]" />
+        {scene === 0 && (
+          <div className="animate-scene-fade-in absolute inset-0">
+            <img
+              src={slideClubmaster}
+              alt="디자이너 선글라스를 착용한 럭셔리 모델"
+              className="h-full w-full object-cover"
+            />
+            <span className="absolute bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-black/70 px-4 py-1 text-[10px] tracking-[0.2em] text-white">
+              DESIGNER SUNGLASSES
+            </span>
+          </div>
+        )}
 
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            className="animate-intro-face-breathe h-20 w-20 text-white/80"
-            viewBox="0 0 64 64"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.3"
-          >
-            <rect x="23" y="27" width="18" height="27" rx="2.5" />
-            <path d="M28 27v-6a4 4 0 0 1 4-4h0a4 4 0 0 1 4 4v6" />
-            <rect x="29" y="12" width="6" height="6" rx="1" />
-            <line x1="23" y1="38" x2="41" y2="38" strokeWidth="0.8" opacity="0.6" />
-          </svg>
-        </div>
+        {scene === 1 && (
+          <div className="animate-scene-fade-in absolute inset-0 flex items-center justify-center overflow-hidden bg-black">
+            <div
+              key={accessoryIndex}
+              className="animate-circle-pulse absolute h-56 w-56 rounded-full"
+              style={{ backgroundColor: accessory.color }}
+            />
+            <div className="relative z-10 flex flex-col items-center gap-2 text-white">
+              <span className="text-6xl">{accessory.icon}</span>
+              <span className="text-xs font-semibold tracking-widest">{accessory.label}</span>
+            </div>
+          </div>
+        )}
 
-        <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
-          <div className="ml-0.5 h-0 w-0 border-y-[5px] border-l-[8px] border-y-transparent border-l-white/90" />
-        </div>
+        {scene === 2 && (
+          <div className="animate-scene-fade-in absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black px-6">
+            <p className="mb-1 text-[10px] tracking-[0.35em] text-amber-300/80">AI TRY ON</p>
+            {MOCK_PRODUCT_CARDS.map((item, index) => {
+              const isSelected = index === productIndex
+              return (
+                <div
+                  key={item.name}
+                  className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2 transition-all ${
+                    isSelected
+                      ? 'scale-105 border-amber-300 bg-white/10 shadow-[0_0_16px_rgba(252,211,77,0.5)]'
+                      : 'border-white/10 bg-white/5'
+                  }`}
+                >
+                  <span className="text-2xl">{item.icon}</span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[11px] text-white/60">{item.brand}</p>
+                    <p className="truncate text-xs font-medium text-white">{item.name}</p>
+                    <p className="text-xs font-semibold text-amber-300">{item.price}</p>
+                  </div>
+                  {item.discount && (
+                    <span className="rounded-full bg-red-500/90 px-2 py-0.5 text-[10px] font-bold text-white">
+                      -{item.discount}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
 
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/70 to-transparent px-5 pb-5 pt-14">
-          <p className="text-[10px] tracking-[0.3em] text-white/60">MODU BEAUTY EDIT</p>
-          <p className="mt-1 text-lg font-semibold text-white">화장품 · 미용</p>
+        {scene === 3 && (
+          <div className="animate-scene-fade-in absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-black to-gray-900 text-center">
+            <p className="text-2xl font-black tracking-tight text-white">WWW.MODU.RUN</p>
+            <p className="text-xs tracking-[0.3em] text-amber-300">온라인 쇼핑의 혁명</p>
+          </div>
+        )}
+
+        <div className="absolute inset-x-0 bottom-0 flex justify-center gap-1.5 bg-gradient-to-t from-black/60 to-transparent pb-2 pt-6">
+          {[0, 1, 2, 3].map((i) => (
+            <span
+              key={i}
+              className={`h-1 rounded-full transition-all ${
+                scene === i ? 'w-5 bg-amber-300' : 'w-1 bg-white/30'
+              }`}
+            />
+          ))}
         </div>
       </div>
 
