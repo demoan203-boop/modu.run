@@ -27,7 +27,9 @@ class UserCreate(BaseModel):
 
 
 class UserLogin(BaseModel):
-    email: EmailStr
+    # 회원가입(EmailStr)과 달리 str로 둔다 - DATABASE_URL 미설정 시의 임시 데모 로그인("admin")은
+    # 이메일 형식이 아니어서, 여기서 EmailStr로 검증하면 요청 자체가 422로 막혀버린다.
+    email: str
     password: str
 
 

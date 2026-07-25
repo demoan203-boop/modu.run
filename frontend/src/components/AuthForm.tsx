@@ -161,7 +161,7 @@ export function AuthForm({ onClose }: { onClose: () => void }) {
           <>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <input
-                type="email"
+                type={mode === 'login' ? 'text' : 'email'}
                 required
                 placeholder="이메일"
                 value={email}
@@ -172,8 +172,8 @@ export function AuthForm({ onClose }: { onClose: () => void }) {
                 <input
                   type="password"
                   required
-                  minLength={8}
-                  placeholder="비밀번호 (8자 이상)"
+                  minLength={mode === 'register' ? 8 : undefined}
+                  placeholder={mode === 'register' ? '비밀번호 (8자 이상)' : '비밀번호'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="rounded-lg border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none"

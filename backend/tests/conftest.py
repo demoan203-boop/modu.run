@@ -42,3 +42,21 @@ def client(db_session_maker) -> TestClient:
         yield test_client
 
     app.dependency_overrides.clear()
+
+
+@pytest.fixture()
+def demo_client() -> TestClient:
+    """DATABASE_URL이 없는 상태를 재현 - get_db_optional이 None을 반환한다."""
+    from app.core import memory_store
+
+    async def _override_get_db_optional() -> AsyncGenerator[None, None]:
+        yield None
+
+    app.dependency_overrides[get_db_optional] = _override_get_db_optional
+    memory_store.reset()
+
+    with TestClient(app) as test_client:
+        yield test_client
+
+    app.dependency_overrides.clear()
+    memory_store.reset()

@@ -8,7 +8,8 @@ from google.oauth2 import id_token as google_id_token
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import COOKIE_NAME, get_current_user, get_db
+from app.api.deps import COOKIE_NAME, get_current_user, get_demo_user
+from app.db.session import get_db, get_db_optional
 from app.core.config import settings
 from app.core.security import create_access_token, hash_password, verify_password
 from app.db.models import User
@@ -85,7 +86,16 @@ async def register(payload: UserCreate, response: Response, db: AsyncSession = D
 
 
 @router.post("/login", response_model=UserOut)
-async def login(payload: UserLogin, response: Response, db: AsyncSession = Depends(get_db)):
+async def login(payload: UserLogin, response: Response, db: AsyncSession | None = Depends(get_db_optional)):
+    if db is None:
+        # DATABASE_URL 미설정 상태에서만 동작하는 임시 데모 로그인.
+        # DB가 연결되는 즉시 이 분기 자체가 실행되지 않으므로 자동으로 비활성화된다.
+        if payload.email == "admin" and payload.password == "1234":
+            user = get_demo_user()
+            _issue_session(user, response)
+            return user
+        raise HTTPException(status_code=503, detail="DATABASE_URL이 설정되지 않았습니다.")
+
     user = await db.scalar(select(User).where(User.email == payload.email))
     if user is None or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="이메일 또는 비밀번호가 올바르지 않습니다.")

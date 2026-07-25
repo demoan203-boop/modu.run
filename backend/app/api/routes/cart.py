@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_user, get_db
+from app.api.deps import get_current_user
+from app.core import memory_store
 from app.db.models import CartItem, User
+from app.db.session import get_db_optional
 from app.models.schemas import CartItemCreate, CartItemOut
 
 router = APIRouter()
@@ -13,8 +15,11 @@ router = APIRouter()
 async def add_to_cart(
     payload: CartItemCreate,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession | None = Depends(get_db_optional),
 ) -> CartItem:
+    if db is None:
+        return memory_store.add_cart_item(**payload.model_dump())
+
     existing = await db.scalar(
         select(CartItem).where(CartItem.user_id == current_user.id, CartItem.link == payload.link)
     )
@@ -31,8 +36,11 @@ async def add_to_cart(
 @router.get("/cart", response_model=list[CartItemOut])
 async def list_cart(
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession | None = Depends(get_db_optional),
 ) -> list[CartItem]:
+    if db is None:
+        return memory_store.list_cart_items()
+
     result = await db.scalars(
         select(CartItem).where(CartItem.user_id == current_user.id).order_by(CartItem.created_at.desc())
     )
@@ -43,8 +51,13 @@ async def list_cart(
 async def remove_from_cart(
     item_id: int,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession | None = Depends(get_db_optional),
 ) -> None:
+    if db is None:
+        if not memory_store.remove_cart_item(item_id):
+            raise HTTPException(status_code=404, detail="장바구니에서 해당 상품을 찾을 수 없습니다.")
+        return
+
     item = await db.get(CartItem, item_id)
     if item is None or item.user_id != current_user.id:
         raise HTTPException(status_code=404, detail="장바구니에서 해당 상품을 찾을 수 없습니다.")
