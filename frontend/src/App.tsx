@@ -7,14 +7,17 @@ import { CategoryGrid } from './components/CategoryGrid'
 import { CategoryMoodPanel } from './components/CategoryMoodPanel'
 import { OutfitSelector } from './components/OutfitSelector'
 import { AuthForm } from './components/AuthForm'
+import { CartDrawer } from './components/CartDrawer'
 import { SearchHistoryPanel } from './components/SearchHistoryPanel'
 import { IntroScreen } from './components/IntroScreen'
 import { useAuth } from './context/AuthContext'
+import { useCart } from './context/CartContext'
 import type { Product } from './types/product'
 import adBanner from './assets/main-ad-banner.png'
 
 function App() {
-  const { user, isLoading: isAuthLoading, logout } = useAuth()
+  const { user, isLoading: isAuthLoading, logout, isAuthFormOpen, openAuthForm, closeAuthForm } = useAuth()
+  const { items: cartItems } = useCart()
   const [hasEntered, setHasEntered] = useState(false)
   const [query, setQuery] = useState('')
   const [products, setProducts] = useState<Product[]>([])
@@ -22,7 +25,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasSearched, setHasSearched] = useState(false)
-  const [showAuthForm, setShowAuthForm] = useState(false)
+  const [showCart, setShowCart] = useState(false)
   const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0)
   const [screen, setScreen] = useState<'home' | 'category'>('home')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -77,7 +80,26 @@ function App() {
           </div>
 
           {!isAuthLoading && (
-            <div>
+            <div className="flex items-center gap-3">
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => setShowCart(true)}
+                  aria-label="장바구니 열기"
+                  className="relative rounded-lg border border-gray-300 p-2 text-gray-600 transition hover:bg-gray-50"
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5">
+                    <rect x="4" y="9" width="16" height="11" rx="2" />
+                    <path d="M8 9V7a4 4 0 0 1 8 0v2" />
+                  </svg>
+                  {cartItems.length > 0 && (
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+                      {cartItems.length}
+                    </span>
+                  )}
+                </button>
+              )}
+
               {user ? (
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-gray-600">{user.email}</span>
@@ -92,7 +114,7 @@ function App() {
               ) : (
                 <button
                   type="button"
-                  onClick={() => setShowAuthForm(true)}
+                  onClick={openAuthForm}
                   className="rounded-lg bg-indigo-600 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-indigo-700"
                 >
                   로그인
@@ -156,7 +178,8 @@ function App() {
         )}
       </main>
 
-      {showAuthForm && <AuthForm onClose={() => setShowAuthForm(false)} />}
+      {isAuthFormOpen && <AuthForm onClose={closeAuthForm} />}
+      {showCart && <CartDrawer onClose={() => setShowCart(false)} />}
     </div>
   )
 }

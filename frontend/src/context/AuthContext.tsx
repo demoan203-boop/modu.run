@@ -8,6 +8,9 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  isAuthFormOpen: boolean
+  openAuthForm: () => void
+  closeAuthForm: () => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -15,6 +18,7 @@ const AuthContext = createContext<AuthContextValue | null>(null)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isAuthFormOpen, setIsAuthFormOpen] = useState(false)
 
   useEffect(() => {
     api
@@ -40,7 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        login,
+        register,
+        logout,
+        isAuthFormOpen,
+        openAuthForm: () => setIsAuthFormOpen(true),
+        closeAuthForm: () => setIsAuthFormOpen(false),
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

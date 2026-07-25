@@ -45,3 +45,25 @@ class SearchHistoryOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class CartItemCreate(BaseModel):
+    title: str
+    price: int
+    mall_name: str
+    image_url: str
+    link: str
+    category: str = ""
+
+
+class CartItemOut(BaseModel):
+    id: int
+    title: str
+    price: int
+    mall_name: str
+    image_url: str
+    link: str
+    category: str
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
