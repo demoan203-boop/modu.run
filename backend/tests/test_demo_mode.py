@@ -20,6 +20,15 @@ def test_demo_login_rejects_wrong_credentials(demo_client):
     assert response.status_code == 503
 
 
+def test_demo_login_reports_missing_jwt_secret_cleanly_instead_of_crashing(demo_client, monkeypatch):
+    from app.core.config import settings
+
+    monkeypatch.setattr(settings, "jwt_secret_key", "")
+    response = demo_client.post("/api/auth/login", json={"email": "admin", "password": "1234"})
+    assert response.status_code == 503
+    assert "JWT_SECRET_KEY" in response.json()["detail"]
+
+
 def test_register_still_requires_database(demo_client):
     response = demo_client.post(
         "/api/auth/register", json={"email": "someone@example.com", "password": "password123"}
