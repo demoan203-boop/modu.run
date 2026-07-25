@@ -20,5 +20,11 @@ class Settings(BaseSettings):
     cookie_domain: str | None = None
     cookie_secure: bool = False
 
+    # AI 가상 착용: 키가 없어도 mock 프로바이더로 항상 동작한다 (build/런타임 실패 없음).
+    virtual_try_on_provider: str = "mock"
+    virtual_try_on_api_url: str = ""
+    virtual_try_on_api_key: str = ""
+    virtual_try_on_webhook_secret: str = ""
+
 
 settings = Settings()

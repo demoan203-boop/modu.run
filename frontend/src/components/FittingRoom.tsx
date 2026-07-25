@@ -1,5 +1,10 @@
 import { useMemo, useRef, useState, type ReactNode } from 'react'
 import type { CartItem } from '../types/cart'
+import { useVirtualTryOn } from '../hooks/useVirtualTryOn'
+import { TryOnProgress } from './TryOnProgress'
+import { TryOnResultViewer } from './TryOnResultViewer'
+import { TryOnErrorState } from './TryOnErrorState'
+import { PrivacyNotice } from './PrivacyNotice'
 
 function OuterIcon() {
   return (
@@ -89,12 +94,16 @@ function categoryOf(item: CartItem): string {
   return '기타'
 }
 
-export function FittingRoom({ items }: { items: CartItem[] }) {
+export function FittingRoom({ items, onOpenCart }: { items: CartItem[]; onOpenCart: () => void }) {
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [background, setBackground] = useState(BACKGROUNDS[0].value)
   const [activeCategory, setActiveCategory] = useState(CATEGORIES[0].label)
   const [selections, setSelections] = useState<Record<string, CartItem>>({})
+  const [privacyAgreed, setPrivacyAgreed] = useState(false)
+  const [triedItem, setTriedItem] = useState<CartItem | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const tryOn = useVirtualTryOn()
 
   const grouped = useMemo(() => {
     const map = new Map<string, CartItem[]>()
@@ -109,7 +118,9 @@ export function FittingRoom({ items }: { items: CartItem[] }) {
     const file = e.target.files?.[0]
     if (!file) return
     if (photoUrl) URL.revokeObjectURL(photoUrl)
+    setPhotoFile(file)
     setPhotoUrl(URL.createObjectURL(file))
+    tryOn.reset()
   }
 
   function selectItem(category: string, item: CartItem) {
@@ -125,6 +136,20 @@ export function FittingRoom({ items }: { items: CartItem[] }) {
 
   const activeItems = grouped.get(activeCategory) ?? []
   const selectedList = Object.entries(selections)
+  const selectedItem = selections[activeCategory] ?? null
+
+  const isBusy = ['validating', 'uploading', 'queued', 'processing'].includes(tryOn.status)
+
+  function handleStartTryOn() {
+    if (!photoFile || !selectedItem || !privacyAgreed) return
+    setTriedItem(selectedItem)
+    tryOn.start(photoFile, selectedItem.id)
+  }
+
+  let tryOnHint: string | null = null
+  if (!photoFile) tryOnHint = '먼저 내 사진을 업로드해주세요.'
+  else if (!selectedItem) tryOnHint = '적용할 상품을 선택해 주세요.'
+  else if (!privacyAgreed) tryOnHint = '이미지 이용 안내에 동의해주세요.'
 
   return (
     <div className="mb-8 overflow-hidden rounded-xl bg-black text-white">
@@ -151,10 +176,31 @@ export function FittingRoom({ items }: { items: CartItem[] }) {
 
       <div className="mt-4 grid grid-cols-1 lg:grid-cols-[1fr_320px]">
         <div
-          className="relative flex min-h-[460px] items-center justify-center transition-colors"
+          className={`relative flex min-h-[460px] flex-col transition-colors ${
+            tryOn.status === 'succeeded' && tryOn.resultImageUrl ? 'justify-center p-4' : 'items-center justify-center'
+          }`}
           style={{ backgroundColor: background }}
         >
-          {photoUrl ? (
+          {tryOn.status === 'succeeded' && tryOn.resultImageUrl && photoUrl ? (
+            <TryOnResultViewer
+              originalUrl={photoUrl}
+              resultUrl={tryOn.resultImageUrl}
+              isDemo={tryOn.provider === 'mock'}
+              productTitle={triedItem?.title ?? ''}
+              onApplyAnother={() => tryOn.reset()}
+              onOpenCart={onOpenCart}
+              onBuyNow={() => triedItem && window.open(triedItem.link, '_blank', 'noreferrer')}
+            />
+          ) : tryOn.status === 'failed' ? (
+            <TryOnErrorState
+              message={tryOn.errorMessage ?? '가상 착용 결과를 생성하지 못했습니다.'}
+              onRetry={handleStartTryOn}
+              onChangePhoto={() => fileInputRef.current?.click()}
+              onChangeProduct={() => tryOn.reset()}
+            />
+          ) : isBusy ? (
+            <TryOnProgress status={tryOn.status} />
+          ) : photoUrl ? (
             <img src={photoUrl} alt="업로드한 사진" className="h-full max-h-[460px] w-auto object-contain" />
           ) : (
             <div className="flex flex-col items-center gap-3 text-white/40">
@@ -163,25 +209,32 @@ export function FittingRoom({ items }: { items: CartItem[] }) {
                 <path d="M20 205 L30 90 Q50 75 70 90 L80 205" />
               </svg>
               <p className="text-xs">사진을 업로드해보세요</p>
+              <ul className="mt-1 space-y-0.5 text-center text-[10px] leading-relaxed text-white/30">
+                <li>정면을 바라보는 사진 · 신체가 가려지지 않은 사진</li>
+                <li>밝고 선명한 사진 · 단색 배경 권장 · 한 명만 포함된 사진</li>
+              </ul>
             </div>
           )}
 
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp"
             onChange={handlePhotoChange}
             className="hidden"
           />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-md transition hover:bg-white/20"
-          >
-            {photoUrl ? '사진 변경' : '내 사진 업로드'}
-          </button>
 
-          {selectedList.length > 0 && (
+          {!isBusy && tryOn.status !== 'succeeded' && tryOn.status !== 'failed' && (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute bottom-4 left-1/2 min-h-[44px] -translate-x-1/2 rounded-full bg-white/10 px-4 py-2 text-xs font-medium text-white backdrop-blur-md transition hover:bg-white/20"
+            >
+              {photoUrl ? '사진 변경' : '내 사진 선택하기'}
+            </button>
+          )}
+
+          {!isBusy && tryOn.status === 'idle' && selectedList.length > 0 && (
             <div className="absolute left-4 top-4 flex flex-col gap-2">
               {selectedList.map(([category, item]) => (
                 <div
@@ -199,9 +252,11 @@ export function FittingRoom({ items }: { items: CartItem[] }) {
             </div>
           )}
 
-          <p className="absolute bottom-1 right-2 text-[9px] text-white/25">
-            사진은 브라우저에만 표시되며 저장되지 않습니다
-          </p>
+          {tryOn.status === 'idle' && (
+            <p className="absolute bottom-1 right-2 text-[9px] text-white/25">
+              사진은 브라우저에만 표시되며 저장되지 않습니다
+            </p>
+          )}
         </div>
 
         <div className="flex flex-col bg-white/5 backdrop-blur-md">
@@ -241,11 +296,17 @@ export function FittingRoom({ items }: { items: CartItem[] }) {
                     <button
                       key={item.id}
                       type="button"
+                      aria-pressed={isSelected}
                       onClick={() => selectItem(activeCategory, item)}
-                      className={`overflow-hidden rounded-lg border bg-white/5 text-left transition ${
+                      className={`relative overflow-hidden rounded-lg border bg-white/5 text-left transition ${
                         isSelected ? 'border-amber-300 ring-1 ring-amber-300' : 'border-white/10 hover:border-white/30'
                       }`}
                     >
+                      {isSelected && (
+                        <span className="absolute right-1.5 top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-amber-300 text-[10px] font-bold text-black">
+                          ✓
+                        </span>
+                      )}
                       <div className="aspect-square w-full bg-white/10">
                         {item.image_url && (
                           <img src={item.image_url} alt={item.title} className="h-full w-full object-cover" />
@@ -256,12 +317,32 @@ export function FittingRoom({ items }: { items: CartItem[] }) {
                         <p className="text-[11px] font-semibold text-amber-300">
                           {item.price.toLocaleString('ko-KR')}원
                         </p>
+                        {isSelected && <p className="text-[9px] text-amber-300/80">선택됨</p>}
                       </div>
                     </button>
                   )
                 })}
               </div>
             )}
+          </div>
+
+          <div className="flex flex-col gap-2 border-t border-white/10 p-3">
+            <PrivacyNotice agreed={privacyAgreed} onAgreedChange={setPrivacyAgreed} />
+
+            {tryOnHint && tryOn.status === 'idle' && (
+              <p role="alert" className="text-center text-[11px] text-amber-300/80">
+                {tryOnHint}
+              </p>
+            )}
+
+            <button
+              type="button"
+              onClick={handleStartTryOn}
+              disabled={!photoFile || !selectedItem || !privacyAgreed || isBusy}
+              className="min-h-[44px] w-full rounded-lg bg-amber-300 text-sm font-semibold text-black transition hover:bg-amber-200 disabled:cursor-not-allowed disabled:bg-white/10 disabled:text-white/40"
+            >
+              AI로 착용해 보기
+            </button>
           </div>
         </div>
       </div>

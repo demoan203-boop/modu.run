@@ -84,3 +84,14 @@ class GoogleLoginRequest(BaseModel):
 
 class KakaoLoginRequest(BaseModel):
     access_token: str
+
+
+class VirtualTryOnJobOut(BaseModel):
+    id: str
+    status: str
+    product_title: str
+    category: str
+    provider: str
+    result_image_url: str | None = None
+    error_message: str | None = None
+    created_at: datetime

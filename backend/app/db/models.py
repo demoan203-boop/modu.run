@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timezone
 
 from sqlalchemy import ForeignKey, String, Text, UniqueConstraint
@@ -55,3 +56,26 @@ class CartItem(Base):
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
     user: Mapped["User"] = relationship(back_populates="cart_items")
+
+
+class VirtualTryOnJob(Base):
+    __tablename__ = "virtual_try_on_jobs"
+
+    # 얼굴 사진은 저장하지 않으므로(개인정보 방침) input/result 이미지 경로 컬럼은 두지 않는다.
+    # 합성 결과는 프로세스 메모리에만 잠깐 보관했다가 조회 즉시 폐기한다 (app/services/virtual_try_on).
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    product_title: Mapped[str] = mapped_column(String(500))
+    product_link: Mapped[str] = mapped_column(Text)
+    category: Mapped[str] = mapped_column(String(100), default="")
+    provider: Mapped[str] = mapped_column(String(50), default="mock")
+    provider_job_id: Mapped[str | None] = mapped_column(String(255), default=None)
+    status: Mapped[str] = mapped_column(String(20), default="queued")
+    error_message: Mapped[str | None] = mapped_column(Text, default=None)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
+    updated_at: Mapped[datetime] = mapped_column(
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+    )
+
+    user: Mapped["User"] = relationship()

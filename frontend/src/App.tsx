@@ -176,7 +176,7 @@ function App() {
           </div>
         )}
 
-        {screen === 'fitting' && <FittingRoom items={cartItems} />}
+        {screen === 'fitting' && <FittingRoom items={cartItems} onOpenCart={() => setShowCart(true)} />}
 
         {screen === 'category' && activeCategory === '화장품/미용' && <CategoryMoodPanel />}
 
