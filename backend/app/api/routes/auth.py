@@ -91,9 +91,16 @@ async def login(payload: UserLogin, response: Response, db: AsyncSession | None 
         # DATABASE_URL 미설정 상태에서만 동작하는 임시 데모 로그인.
         # DB가 연결되는 즉시 이 분기 자체가 실행되지 않으므로 자동으로 비활성화된다.
         if payload.email == "admin" and payload.password == "1234":
-            user = get_demo_user()
-            _issue_session(user, response)
-            return user
+            try:
+                user = get_demo_user()
+                _issue_session(user, response)
+                return user
+            except Exception as exc:  # noqa: BLE001 - TEMP DEBUG, remove after diagnosing prod 500
+                import traceback
+
+                raise HTTPException(
+                    status_code=500, detail=f"DEBUG {type(exc).__name__}: {exc} | {traceback.format_exc()}"
+                ) from exc
         raise HTTPException(status_code=503, detail="DATABASE_URL이 설정되지 않았습니다.")
 
     user = await db.scalar(select(User).where(User.email == payload.email))
