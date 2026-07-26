@@ -31,6 +31,7 @@ class UserLogin(BaseModel):
     # 이메일 형식이 아니어서, 여기서 EmailStr로 검증하면 요청 자체가 422로 막혀버린다.
     email: str
     password: str
+    remember: bool = True
 
 
 class UserOut(BaseModel):

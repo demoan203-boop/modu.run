@@ -34,8 +34,8 @@ export function register(email: string, password: string): Promise<User> {
   return request('/api/auth/register', { method: 'POST', body: JSON.stringify({ email, password }) })
 }
 
-export function login(email: string, password: string): Promise<User> {
-  return request('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) })
+export function login(email: string, password: string, remember = true): Promise<User> {
+  return request('/api/auth/login', { method: 'POST', body: JSON.stringify({ email, password, remember }) })
 }
 
 export function logout(): Promise<void> {

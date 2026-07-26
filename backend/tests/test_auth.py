@@ -39,6 +39,33 @@ def test_logout_clears_session(client):
     assert client.get("/api/auth/me").status_code == 401
 
 
+def test_login_with_remember_true_sets_persistent_cookie(client):
+    client.post("/api/auth/register", json={"email": "remember1@example.com", "password": "password123"})
+    client.post("/api/auth/logout")
+
+    response = client.post(
+        "/api/auth/login",
+        json={"email": "remember1@example.com", "password": "password123", "remember": True},
+    )
+    assert response.status_code == 200
+    assert "max-age" in response.headers["set-cookie"].lower()
+
+
+def test_login_with_remember_false_sets_session_cookie(client):
+    client.post("/api/auth/register", json={"email": "remember2@example.com", "password": "password123"})
+    client.post("/api/auth/logout")
+
+    response = client.post(
+        "/api/auth/login",
+        json={"email": "remember2@example.com", "password": "password123", "remember": False},
+    )
+    assert response.status_code == 200
+    assert "max-age" not in response.headers["set-cookie"].lower()
+
+    # 세션 쿠키라도 로그인 자체는 정상적으로 유지된다 (같은 요청/응답 사이클 안에서는 쿠키가 살아있음).
+    assert client.get("/api/auth/me").status_code == 200
+
+
 def test_search_saves_history_for_logged_in_user(client):
     client.post("/api/auth/register", json={"email": "d@example.com", "password": "password123"})
 

@@ -40,11 +40,16 @@ def _cookie_kwargs() -> dict:
     return kwargs
 
 
-def _issue_session(user: User, response: Response) -> None:
+def _issue_session(user: User, response: Response, *, remember: bool = True) -> None:
     if not settings.jwt_secret_key:
         raise HTTPException(status_code=503, detail="JWT_SECRET_KEY이 설정되지 않았습니다.")
     token = create_access_token(user.id)
-    response.set_cookie(COOKIE_NAME, token, max_age=settings.jwt_expire_minutes * 60, **_cookie_kwargs())
+    kwargs = _cookie_kwargs()
+    # remember=False면 max_age를 아예 안 줘서 브라우저 세션 쿠키로 발급한다 (브라우저 종료 시 삭제).
+    # 토큰 자체의 만료(exp)는 그대로 jwt_expire_minutes를 따르므로, 브라우저를 안 닫으면 평소처럼 유지된다.
+    if remember:
+        kwargs["max_age"] = settings.jwt_expire_minutes * 60
+    response.set_cookie(COOKIE_NAME, token, **kwargs)
 
 
 async def _find_or_link_social_user(
@@ -94,7 +99,7 @@ async def login(payload: UserLogin, response: Response, db: AsyncSession | None 
         # DB가 연결되는 즉시 이 분기 자체가 실행되지 않으므로 자동으로 비활성화된다.
         if payload.email == "admin" and payload.password == "1234":
             user = get_demo_user()
-            _issue_session(user, response)
+            _issue_session(user, response, remember=payload.remember)
             return user
         raise HTTPException(status_code=503, detail="DATABASE_URL이 설정되지 않았습니다.")
 
@@ -102,7 +107,7 @@ async def login(payload: UserLogin, response: Response, db: AsyncSession | None 
     if user is None or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="이메일 또는 비밀번호가 올바르지 않습니다.")
 
-    _issue_session(user, response)
+    _issue_session(user, response, remember=payload.remember)
     return user
 
 
