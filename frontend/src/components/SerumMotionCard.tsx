@@ -58,8 +58,7 @@ export function SerumMotionCard() {
         )}
 
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent px-4 pb-4 pt-10">
-          <p className="text-[10px] font-semibold tracking-widest text-sky-900/50">PROMPT</p>
-          <p className="mt-1 text-xs leading-relaxed text-sky-950/70">
+          <p className="text-xs leading-relaxed text-sky-950/70">
             {scene === 0
               ? '반사 리본 위에 균형을 잡은 세럼, 부드러운 블루 그라데이션'
               : '드로퍼 끝에서 떨어지는 한 방울, 표면 위로 번지는 잔잔한 파문'}
