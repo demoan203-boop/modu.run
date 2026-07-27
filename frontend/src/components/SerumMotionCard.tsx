@@ -15,12 +15,24 @@ const CAPTIONS = [
 ]
 
 // 병 디자인은 씬 전체에서 절대 바뀌지 않는다 (캡/보디/라벨 위치·타이포·색상 고정).
+// 투명 유리 안에 블루 리퀴드가 비치는 형태 + 크롬 드로퍼 캡 (참고 이미지 스타일 반영).
 function ModuBottle({ className = '' }: { className?: string }) {
   return (
     <div className={`flex flex-col items-center ${className}`}>
-      <div className="h-6 w-9 rounded-t-sm bg-gradient-to-b from-slate-300 via-slate-400 to-slate-600" />
-      <div className="flex h-32 w-14 items-center justify-center rounded-md bg-gradient-to-b from-sky-100/95 to-sky-300/80 shadow-[0_0_24px_rgba(125,190,225,0.55)] ring-1 ring-white/70">
-        <span className="rotate-90 whitespace-nowrap text-[8px] font-bold tracking-wide text-sky-900/70">MODU</span>
+      {/* 크롬 드로퍼 캡 */}
+      <div className="relative h-7 w-8 rounded-t-md bg-gradient-to-b from-gray-100 via-gray-400 to-gray-600 shadow-inner">
+        <div className="absolute inset-x-1.5 top-1 h-1 rounded-full bg-white/70" />
+      </div>
+      {/* 드로퍼 튜브 (유리) */}
+      <div className="h-3 w-1.5 bg-gradient-to-b from-white/70 to-sky-200/40" />
+      {/* 투명 유리 보디 + 내부 블루 리퀴드 */}
+      <div className="relative h-32 w-14 overflow-hidden rounded-md border border-white/70 bg-white/10 shadow-[0_0_22px_rgba(125,190,225,0.45)]">
+        <div className="absolute inset-x-0 bottom-0 h-[76%] bg-gradient-to-b from-sky-300/90 via-sky-400/85 to-sky-500/90" />
+        <div className="absolute inset-x-0 bottom-[76%] h-[3px] bg-white/50" />
+        <div className="absolute left-1 top-1 h-full w-2 rounded-full bg-white/40 blur-[1px]" />
+        <span className="absolute inset-0 flex items-center justify-center rotate-90 whitespace-nowrap text-[8px] font-bold tracking-wide text-white drop-shadow-sm">
+          MODU
+        </span>
       </div>
     </div>
   )
