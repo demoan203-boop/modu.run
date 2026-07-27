@@ -4,7 +4,6 @@ interface CampaignScene {
   background: string
   dark: boolean
   caption: string
-  prompt: string
 }
 
 const SCENES: CampaignScene[] = [
@@ -12,49 +11,41 @@ const SCENES: CampaignScene[] = [
     background: 'linear-gradient(160deg, #120a0c 0%, #2b1418 60%, #120a0c 100%)',
     dark: true,
     caption: '어둠 속에서 맞닿은 두 손, 로즈 골드 하이라이트',
-    prompt: '두 손이 교차하며 감싸는 로즈 향수병, 다크 하이컨트라스트 조명, 블랙 배경 위 웜 하이라이트',
   },
   {
     background: 'linear-gradient(135deg, #3a2a28 0%, #6b4a44 100%)',
     dark: true,
     caption: '실루엣 속에 번지는 은은한 잔향',
-    prompt: '향수병을 가까이하는 여성 옆모습 실루엣, 부드러운 역광, 따뜻한 베이지 톤',
   },
   {
     background: 'linear-gradient(160deg, #caa06a 0%, #e8c9a0 100%)',
     dark: false,
     caption: '피부 위에 스며드는 따뜻한 골드',
-    prompt: '쇄골 위에 놓인 향수병, 따뜻한 골드 조명, 피부 질감이 살아있는 인티메이트한 뷰티 컷',
   },
   {
     background: 'linear-gradient(160deg, #f1d9c9 0%, #f7e6da 100%)',
     dark: false,
     caption: '손끝에서 완성되는 미니멀 럭셔리',
-    prompt: '손으로 세워 든 향수병, 부드러운 웜톤 배경, 미니멀한 럭셔리 구도',
   },
   {
     background: 'linear-gradient(160deg, #f3d6c4 0%, #f9e8dc 100%)',
     dark: false,
     caption: '어깨 위에 머무는 부드러운 빛',
-    prompt: '어깨 위에 놓인 향수병, 부드러운 시네마틱 조명, 얕은 심도',
   },
   {
     background: 'linear-gradient(160deg, #efe0d3 0%, #f8f1e9 100%)',
     dark: false,
     caption: '두 손 안에 담긴 우아함',
-    prompt: '중앙의 향수병을 감싸는 두 손, 대칭 구도, 따뜻한 뉴트럴 배경',
   },
   {
     background: 'linear-gradient(160deg, #f7ece4 0%, #fbf5f0 100%)',
     dark: false,
     caption: '가장 단순한 순간, 가장 완벽한 향',
-    prompt: '한 손으로 세워 든 향수병, 깔끔한 스튜디오 배경, 제품에 집중한 구도',
   },
   {
     background: 'linear-gradient(160deg, #f6d9d9 0%, #fbeaea 100%)',
     dark: false,
     caption: '두 손 사이, 은은하게 떠오르는 로즈',
-    prompt: '두 손 사이에 떠 있는 듯한 향수병, 부드러운 제스처, 웜 그라데이션 배경',
   },
 ]
 
@@ -119,14 +110,8 @@ export function BeautyCampaignCarousel() {
         </button>
 
         <div className="absolute inset-x-0 bottom-0 p-4">
-          <p className={`text-[10px] font-semibold tracking-[0.25em] ${scene.dark ? 'text-rose-200/70' : 'text-rose-900/50'}`}>
-            PROMPT
-          </p>
-          <p className={`mt-1 text-xs leading-relaxed ${scene.dark ? 'text-white/85' : 'text-gray-700'}`}>
+          <p className={`text-xs leading-relaxed ${scene.dark ? 'text-white/85' : 'text-gray-700'}`}>
             {scene.caption}
-          </p>
-          <p className={`mt-1 text-[10px] leading-relaxed ${scene.dark ? 'text-white/40' : 'text-gray-400'}`}>
-            {scene.prompt}
           </p>
         </div>
       </div>
