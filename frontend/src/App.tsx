@@ -5,6 +5,8 @@ import { LoadingState } from './components/LoadingState'
 import { ProductList } from './components/ProductList'
 import { CategoryGrid } from './components/CategoryGrid'
 import { CategoryMoodPanel } from './components/CategoryMoodPanel'
+import { BeautyCampaignCarousel } from './components/BeautyCampaignCarousel'
+import { SerumMotionCard } from './components/SerumMotionCard'
 import { FashionMotionPoster } from './components/FashionMotionPoster'
 import { OutfitSelector } from './components/OutfitSelector'
 import { FittingRoom } from './components/FittingRoom'
@@ -179,7 +181,13 @@ function App() {
 
         {screen === 'fitting' && <FittingRoom items={cartItems} onOpenCart={() => setShowCart(true)} />}
 
-        {screen === 'category' && activeCategory === '화장품/미용' && <CategoryMoodPanel />}
+        {screen === 'category' && activeCategory === '화장품/미용' && (
+          <>
+            <CategoryMoodPanel />
+            <BeautyCampaignCarousel />
+            <SerumMotionCard />
+          </>
+        )}
 
         {screen === 'category' && activeCategory === '패션잡화' && <FashionMotionPoster />}
 
