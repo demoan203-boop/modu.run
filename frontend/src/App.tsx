@@ -7,6 +7,7 @@ import { CategoryGrid } from './components/CategoryGrid'
 import { CategoryMoodPanel } from './components/CategoryMoodPanel'
 import { BeautyCampaignCarousel } from './components/BeautyCampaignCarousel'
 import { SerumMotionCard } from './components/SerumMotionCard'
+import { SerumHypeReel } from './components/SerumHypeReel'
 import { FashionMotionPoster } from './components/FashionMotionPoster'
 import { OutfitSelector } from './components/OutfitSelector'
 import { FittingRoom } from './components/FittingRoom'
@@ -186,6 +187,7 @@ function App() {
             <CategoryMoodPanel />
             <BeautyCampaignCarousel />
             <SerumMotionCard />
+            <SerumHypeReel />
           </>
         )}
 
